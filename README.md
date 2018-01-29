@@ -7,6 +7,15 @@ El objetivo de este proyecto es ejercitar y seguir aprendiendo sobre los concept
 * Utilizar los displays, leds y switches de ambas placas para controlas 
 * Conectar un teclado de TI99 4A a la EDU-CIAA-NXP
 
+Toolchains:
+* LaunchPad:
+  * CSS v7
+* EDU-CIAA-NXP: 
+  * algo parecido a [http://www.proyecto-ciaa.com.ar/devwiki/doku.php?id=borradores:install_linux]
+  * sAPI del Firmware V2 [https://github.com/ciaa/firmware_v2.git]
+
+
+<!-- language: lang-none -->
 
                         +---------+ 
                         | Teclado |
@@ -25,6 +34,7 @@ El objetivo de este proyecto es ejercitar y seguir aprendiendo sobre los concept
                        |   Display  |
                        +------------+ 
  
+
 [1] 
 [2] 
 [3] 
