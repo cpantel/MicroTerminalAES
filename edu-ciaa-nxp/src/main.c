@@ -39,15 +39,21 @@ int main(void){
 
    uartConfig( UART_232, 9600 );
 
-   char buffer[] = "Prueba nivel\r\n";
-
-
    while(1) {
-      int times;
-      for (times = 0; times < 1000; ++times) {
-         uartWriteByte( UART_232, buffer );
-      }
+      uartWriteByte( UART_232, 'a' );
       delay(100);
+      uartWriteByte( UART_232, 'b' );
+      delay(200);
+      uartWriteByte( UART_232, 'b' );
+      delay(400);
+      uartWriteByte( UART_232, 'b' );
+      delay(800);
+
+
+
+
+
+
    }
 
    return 0 ;
