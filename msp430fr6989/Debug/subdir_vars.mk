@@ -7,21 +7,39 @@ CMD_SRCS += \
 ../lnk_msp430fr6989.cmd 
 
 C_SRCS += \
-../main.c 
+../main.c \
+../myClocksWithCrystals.c \
+../myGpio.c \
+../myLcd.c 
 
 C_DEPS += \
-./main.d 
+./main.d \
+./myClocksWithCrystals.d \
+./myGpio.d \
+./myLcd.d 
 
 OBJS += \
-./main.obj 
+./main.obj \
+./myClocksWithCrystals.obj \
+./myGpio.obj \
+./myLcd.obj 
 
 OBJS__QUOTED += \
-"main.obj" 
+"main.obj" \
+"myClocksWithCrystals.obj" \
+"myGpio.obj" \
+"myLcd.obj" 
 
 C_DEPS__QUOTED += \
-"main.d" 
+"main.d" \
+"myClocksWithCrystals.d" \
+"myGpio.d" \
+"myLcd.d" 
 
 C_SRCS__QUOTED += \
-"../main.c" 
+"../main.c" \
+"../myClocksWithCrystals.c" \
+"../myGpio.c" \
+"../myLcd.c" 
 
 

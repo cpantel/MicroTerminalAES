@@ -1,4 +1,11 @@
 #include <msp430fr6989.h>
+
+#include <driverlib.h>
+#include "myGpio.h"
+#include "myClocks.h"
+#include "myLcd.h"
+
+
 #define ENABLE_PINS     0xFFFE
 
 #define UART_CLK_SEL  0x0080
@@ -12,13 +19,10 @@
 int main(void)
 {
     WDTCTL = WDTPW | WDTHOLD;   // stop watchdog timer
-    PM5CTL0 = ENABLE_PINS;
 
-    // setup leds
-    P1DIR = BIT0;
-    P9DIR = BIT7;
-    P1OUT = 0x00;
-    P9OUT = 0x00;
+    initGPIO();
+    initClocks();
+    myLCD_init();
 
     // select clock signals
     CSCTL0 = 0xA500;
@@ -39,6 +43,13 @@ int main(void)
     UCA0CTLW0  = UCA0CTLW0 & (~UCSWRST);
 
 
+    myLCD_showChar('A',1);
+    myLCD_showChar('E',2);
+    myLCD_showChar('S',3);
+    myLCD_showChar('R',4);
+    myLCD_showChar('U',5);
+    myLCD_showChar('N',6);
+
     // enable UART RXD interrupt
     UCA0IE = UCRXIE;
     _BIS_SR(GIE);
@@ -48,12 +59,23 @@ int main(void)
 
 #pragma vector=USCI_A0_VECTOR
 __interrupt void UART_ISR(void) {
+       static int pos = 1;
+
        P9OUT ^= BIT7;
-       if (UCA0RXBUF == 'a' ) {
+       uint8_t l = UCA0RXBUF;
+       if (l == 'A' ) {
            P1OUT = BIT0;
+           myLCD_showSymbol(LCD_TOGGLE, LCD_HRT, 0);
        } else {
            P1OUT = 0x00;
        }
+       myLCD_showChar(l,pos);
+       ++pos;
+       if (pos > 6) pos = 1;
+
+
+
+       UCA0TXBUF = l;
        UCA0IFG = UCA0IFG & ~(UCRXIFG);
 
 }
