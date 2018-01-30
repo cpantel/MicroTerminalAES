@@ -40,13 +40,13 @@ int main(void){
    uartConfig( UART_232, 9600 );
 
    while(1) {
-      uartWriteByte( UART_232, 'a' );
+      uartWriteByte( UART_232, 'A' );
       delay(100);
-      uartWriteByte( UART_232, 'b' );
+      uartWriteByte( UART_232, 'B' );
       delay(200);
-      uartWriteByte( UART_232, 'b' );
+      uartWriteByte( UART_232, 'C' );
       delay(400);
-      uartWriteByte( UART_232, 'b' );
+      uartWriteByte( UART_232, 'D' );
       delay(800);
 
 
