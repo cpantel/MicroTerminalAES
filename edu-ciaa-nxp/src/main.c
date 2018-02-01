@@ -33,25 +33,86 @@
 
 #include "sapi.h"
 
+const char heartChar[8] = {
+   0b00000,
+   0b01010,
+   0b11111,
+   0b11111,
+   0b01110,
+   0b00100,
+   0b00000,
+   0b00000
+};
+
+void show(char *dato) {
+    static uint8_t col = 2;
+    static uint8_t on = true;
+
+    lcdGoToXY( 1, 1 );
+    if (on) {
+       lcdData(0);
+    } else {
+       lcdSendStringRaw(" ");
+    }
+    on = ! on;
+    lcdGoToXY( col,1);
+
+    lcdSendStringRaw(dato);
+    ++col;
+    if (col > 16) {
+       col = 2;
+       lcdGoToXY( 2, 1 );
+    } 
+}
+
+
 int main(void){
+
+   char dato[] = { 0x0,0x0 };
 
    boardConfig();
 
+   lcdInit( 16, 2, 5, 8 );
+
+   lcdCreateChar( 0, heartChar );
+
    uartConfig( UART_232, 9600 );
+
+   lcdClear();
+
+   lcdGoToXY( 1, 1 );
+
+   lcdData(0);
+
 
    while(1) {
       uartWriteByte( UART_232, 'A' );
+      if(  uartReadByte( UART_232, (uint8_t * )&dato[0] ) ){
+         show(dato);
+      }
+
       delay(100);
+
       uartWriteByte( UART_232, 'B' );
+      if(  uartReadByte( UART_232, (uint8_t * )&dato[0] ) ){
+         show(dato);
+      }
+
       delay(200);
+
       uartWriteByte( UART_232, 'C' );
+      if(  uartReadByte( UART_232, (uint8_t * )&dato[0] ) ){
+         show(dato);
+      }
+
       delay(400);
+
       uartWriteByte( UART_232, 'D' );
+       if(  uartReadByte( UART_232, (uint8_t * )&dato[0] ) ){
+         show(dato);
+      }
+
       delay(800);
-
-
-
-
 
 
    }
