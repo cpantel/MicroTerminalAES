@@ -63,9 +63,6 @@ int main(void){
 
    lcdGoToXY( 1, 1 );
 
-   lcdData(0);
-
-
    while(1) {
 
       if ( uartReadByte( UART_USB, (uint8_t * )&dato[0] ) ){
