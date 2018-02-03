@@ -33,6 +33,17 @@
 
 #include "sapi.h"
 
+const char emeChar[8] = {
+   0b10001,
+   0b11011,
+   0b10101,
+   0b10101,
+   0b10101,
+   0b10101,
+   0b10101,
+   0b10001
+};
+
 const char heartChar[8] = {
    0b00000,
    0b01010,
@@ -43,7 +54,27 @@ const char heartChar[8] = {
    0b00000,
    0b00000
 };
-
+const char iiiChar[8] = {
+   0b01100,
+   0b01100,
+   0b00000,
+   0b01100,
+   0b01100,
+   0b01100,
+   0b01100,
+   0b01100
+};
+// descripcion del la letra
+const char aaaChar[8] = {
+   0b00000,
+   0b11110,
+   0b10010,
+   0b11110,
+   0b10010,
+   0b10010,
+   0b00010,
+   0b00010
+};
 void show(char *dato) {
     static uint8_t col = 2;
     static uint8_t on = true;
@@ -57,7 +88,19 @@ void show(char *dato) {
     on = ! on;
     lcdGoToXY( col,1);
 
-    lcdSendStringRaw(dato);
+
+// reemplazo de la letra
+
+    if (*dato == 'M') {
+       lcdData(1);
+    } else  if (*dato == 'A') {
+       lcdData(2);
+} else  if (*dato == 'I') {
+       lcdData(3);
+    } else {
+       lcdSendStringRaw(dato);
+    }
+
     ++col;
     if (col > 16) {
        col = 2;
@@ -74,9 +117,20 @@ int main(void){
 
    lcdInit( 16, 2, 5, 8 );
 
+
    lcdCreateChar( 0, heartChar );
 
+   lcdCreateChar( 1, emeChar );
+
+   lcdCreateChar( 2, aaaChar );
+
+   lcdCreateChar( 3, iiiChar );
+
+// creacion de la letra
+
    uartConfig( UART_232, 9600 );
+
+   uartConfig( UART_USB, 9600 );
 
    lcdClear();
 
@@ -86,33 +140,13 @@ int main(void){
 
 
    while(1) {
-      uartWriteByte( UART_232, 'A' );
+      if ( uartReadByte( UART_USB, (uint8_t * )&dato[0] ) ){
+         uartWriteByte( UART_232, dato[0] );
+      }
+
       if(  uartReadByte( UART_232, (uint8_t * )&dato[0] ) ){
          show(dato);
       }
-
-      delay(100);
-
-      uartWriteByte( UART_232, 'B' );
-      if(  uartReadByte( UART_232, (uint8_t * )&dato[0] ) ){
-         show(dato);
-      }
-
-      delay(200);
-
-      uartWriteByte( UART_232, 'C' );
-      if(  uartReadByte( UART_232, (uint8_t * )&dato[0] ) ){
-         show(dato);
-      }
-
-      delay(400);
-
-      uartWriteByte( UART_232, 'D' );
-       if(  uartReadByte( UART_232, (uint8_t * )&dato[0] ) ){
-         show(dato);
-      }
-
-      delay(800);
 
 
    }
