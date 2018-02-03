@@ -53,5 +53,8 @@ dkms.conf
 
 # Other
 .cproject
-*/Debug/*
 .*.swp
+
+msp430fr6989/.launches
+msp430fr6989/Debug
+
