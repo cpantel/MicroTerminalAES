@@ -13,6 +13,9 @@
 #define BR1_FOR_9600  0x00
 #define CLK_MOD       0x4911
 
+
+char buffer[] = "01234567890ABCDEF";
+
 /**
  * main.c
  */
@@ -57,25 +60,44 @@ int main(void)
     while (1);
 }
 
+
+
 #pragma vector=USCI_A0_VECTOR
 __interrupt void UART_ISR(void) {
-       static int pos = 1;
+       static int lcdIdx = 1;
+       static int bufferIdx = 0;
+
 
        P9OUT ^= BIT7;
-       uint8_t l = UCA0RXBUF;
-       if (l == 'A' ) {
-           P1OUT = BIT0;
-           myLCD_showSymbol(LCD_TOGGLE, LCD_HRT, 0);
-       } else {
-           P1OUT = 0x00;
+
+       uint8_t charRead = UCA0RXBUF;
+
+       myLCD_showSymbol(LCD_UPDATE, LCD_RX, 0);
+
+       myLCD_showChar(charRead,lcdIdx );
+
+       buffer[bufferIdx]=charRead;
+
+       ++lcdIdx;
+       ++bufferIdx;
+
+       if (lcdIdx > 6) lcdIdx = 1;
+
+       if ( bufferIdx > 15) {
+           for (bufferIdx = 0; bufferIdx < 16 ; ++bufferIdx) {
+               UCA0TXBUF = buffer[bufferIdx];
+               //UCA0IFG = UCA0IFG & ( ~UCTXCPTIFG);
+               int delay = 0;
+               for (delay = 0; delay < 30000; ++delay);
+               myLCD_showSymbol(LCD_TOGGLE, LCD_TX, 0);
+
+           }
+           bufferIdx = 0;
+
        }
-       myLCD_showChar(l,pos);
-       ++pos;
-       if (pos > 6) pos = 1;
 
-
-
-       UCA0TXBUF = l;
        UCA0IFG = UCA0IFG & ~(UCRXIFG);
+
+       myLCD_showSymbol(LCD_CLEAR, LCD_RX, 0);
 
 }
