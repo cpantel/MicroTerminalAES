@@ -1,4 +1,4 @@
-/* Copyright 2018, Carlos Pantelides
+/* Copyright 2015-2016, Eric Pernia.
  * All rights reserved.
  *
  * This file is part sAPI library for microcontrollers.
@@ -31,51 +31,32 @@
  *
  */
 
-#include "sapi.h"
+/* Date: 2015-09-23 */
 
-void show(char *dato) {
-    static uint8_t col = 1;
-    static uint8_t on = true;
+#ifndef _UART_H_
+#define _UART_H_
 
-    lcdGoToXY( col,1);
+/*==================[inclusions]=============================================*/
 
-    lcdSendStringRaw(dato);
-    ++col;
-    if (col > 16) {
-       col = 1;
-    } 
+/*==================[cplusplus]==============================================*/
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+/*==================[macros]=================================================*/
+
+/*==================[typedef]================================================*/
+
+/*==================[external data declaration]==============================*/
+
+/*==================[external functions declaration]=========================*/
+
+/*==================[cplusplus]==============================================*/
+
+#ifdef __cplusplus
 }
+#endif
 
-
-int main(void){
-
-   char dato[] = { 0x0,0x0 };
-
-   boardConfig();
-
-   lcdInit( 16, 2, 5, 8 );
-
-   uartConfig( UART_232, 9600 );
-
-   uartConfig( UART_USB, 9600 );
-
-   lcdClear();
-
-   lcdGoToXY( 1, 1 );
-
-   uartWriteString(UART_USB, "Ready ");
-
-   while(1) {
-
-      if ( uartReadByte( UART_USB, (uint8_t * )&dato[0] ) ){
-         uartWriteByte( UART_232, dato[0] );
-      }
-
-      if(  uartReadByte( UART_232, (uint8_t * )&dato[0] ) ){
-         show(dato);
-         uartWriteByte( UART_USB, dato[0] );
-      }
-   }
-   return 0 ;
-}
-
+/*==================[end of file]============================================*/
+#endif /* #ifndef _UART_H_ */

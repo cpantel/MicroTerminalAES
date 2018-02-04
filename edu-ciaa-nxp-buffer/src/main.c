@@ -33,47 +33,73 @@
 
 #include "sapi.h"
 
-void show(char *dato) {
-    static uint8_t col = 1;
-    static uint8_t on = true;
-
-    lcdGoToXY( col,1);
-
-    lcdSendStringRaw(dato);
-    ++col;
-    if (col > 16) {
-       col = 1;
-    } 
-}
-
+#define BUFFER_SIZE 16
 
 int main(void){
 
    char dato[] = { 0x0,0x0 };
 
-   boardConfig();
+   char buffer[BUFFER_SIZE] = "ABCDEF0123456789";
 
-   lcdInit( 16, 2, 5, 8 );
+   int bufferIdx = 0;
+
+   int times;
+
+   boardConfig();
 
    uartConfig( UART_232, 9600 );
 
-   uartConfig( UART_USB, 9600 );
+   gpioWrite( LED1, ON );
 
-   lcdClear();
+   gpioWrite( LED3, ON );
 
-   lcdGoToXY( 1, 1 );
+   delay(250);
 
-   uartWriteString(UART_USB, "Ready ");
+   gpioWrite( LED3, OFF );
+
+   delay(250);
+
+
+   for (times = 0; times < 5 ; ++times) {
+      gpioWrite( LED2, ON );
+
+      for (bufferIdx = 0; bufferIdx < BUFFER_SIZE; ++bufferIdx) {
+         uartWriteByte( UART_232, buffer[bufferIdx] );
+      }
+      delay(1000);
+
+      gpioWrite( LED2, OFF );
+
+      delay(1000);
+      buffer[times] = 'X';
+   }
+
 
    while(1) {
 
-      if ( uartReadByte( UART_USB, (uint8_t * )&dato[0] ) ){
-         uartWriteByte( UART_232, dato[0] );
-      }
+      if ( uartReadByte( UART_232, (uint8_t * )&dato[0] ) ){
+         buffer[bufferIdx] = dato[0];
+         uartWriteByte( UART_232,dato);
 
-      if(  uartReadByte( UART_232, (uint8_t * )&dato[0] ) ){
-         show(dato);
-         uartWriteByte( UART_USB, dato[0] );
+         gpioWrite( LED3, ON );
+
+         delay(250);
+
+         gpioWrite( LED3, OFF );
+         delay(250);
+
+         ++bufferIdx;
+
+         if ( bufferIdx == BUFFER_SIZE ) {
+            gpioWrite( LED2, ON );
+
+            for (bufferIdx = 0; ++bufferIdx < BUFFER_SIZE; ++bufferIdx) {
+               uartWriteByte( UART_232, buffer[bufferIdx] );
+            }
+            bufferIdx = 0;
+            delay(1000);
+            gpioWrite( LED2, OFF );
+         }
       }
    }
    return 0 ;
