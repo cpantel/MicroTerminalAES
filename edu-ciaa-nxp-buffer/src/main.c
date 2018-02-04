@@ -37,13 +37,13 @@
 
 int main(void){
 
-   char dato[] = { 0x0,0x0 };
+   uint8_t dato;
 
-   char buffer[BUFFER_SIZE] = "ABCDEF0123456789";
+   char buffer[BUFFER_SIZE];
+   char buffer_pattern[BUFFER_SIZE] = "ABCDEF0123456789";
+   char buffer_ready[BUFFER_SIZE] =   "Ready           ";
 
    int bufferIdx = 0;
-
-   int times;
 
    boardConfig();
 
@@ -51,53 +51,63 @@ int main(void){
 
    gpioWrite( LED1, ON );
 
-   gpioWrite( LED3, ON );
+//   delay(1000);
 
-   delay(250);
+   gpioWrite( LED1, OFF );
 
-   gpioWrite( LED3, OFF );
-
-   delay(250);
+//   delay(1000);
 
 
-   for (times = 0; times < 5 ; ++times) {
-      gpioWrite( LED2, ON );
+   gpioWrite( LED2, ON );
 
-      for (bufferIdx = 0; bufferIdx < BUFFER_SIZE; ++bufferIdx) {
-         uartWriteByte( UART_232, buffer[bufferIdx] );
-      }
-      delay(1000);
 
-      gpioWrite( LED2, OFF );
-
-      delay(1000);
-      buffer[times] = 'X';
+   // Patron de prueba
+   for (bufferIdx = 0; bufferIdx < BUFFER_SIZE; ++bufferIdx) {
+      uartWriteByte( UART_232, buffer_pattern[bufferIdx] );
    }
+//   delay(1000);
 
+   // Patron de prueba transformado   
+   for (bufferIdx = 0; bufferIdx < BUFFER_SIZE; ++bufferIdx) {
+      uartWriteByte( UART_232, buffer_pattern[bufferIdx]+1 );
+   }
+//   delay(1000);
+
+   // Mensaje de listo
+   for (bufferIdx = 0; bufferIdx < BUFFER_SIZE; ++bufferIdx) {
+      uartWriteByte( UART_232, buffer_ready[bufferIdx] );
+   }
+ 
+   gpioWrite( LED2, OFF );
+
+   gpioWrite( LED3, ON );
 
    while(1) {
 
-      if ( uartReadByte( UART_232, (uint8_t * )&dato[0] ) ){
-         buffer[bufferIdx] = dato[0];
+      if ( uartReadByte( UART_232,  &dato ) ){
+         // byte transformado
+         buffer[bufferIdx] = dato + 1;
+
+         // feedback 
          uartWriteByte( UART_232,dato);
 
-         gpioWrite( LED3, ON );
-
-         delay(250);
-
          gpioWrite( LED3, OFF );
-         delay(250);
+
+//         delay(100);
+
+         gpioWrite( LED3, ON );
+//         delay(100);
 
          ++bufferIdx;
 
-         if ( bufferIdx == BUFFER_SIZE ) {
+         if ( bufferIdx >= BUFFER_SIZE ) {
             gpioWrite( LED2, ON );
 
-            for (bufferIdx = 0; ++bufferIdx < BUFFER_SIZE; ++bufferIdx) {
+            for (bufferIdx = 0; bufferIdx < BUFFER_SIZE; ++bufferIdx) {
                uartWriteByte( UART_232, buffer[bufferIdx] );
             }
             bufferIdx = 0;
-            delay(1000);
+//            delay(1000);
             gpioWrite( LED2, OFF );
          }
       }
