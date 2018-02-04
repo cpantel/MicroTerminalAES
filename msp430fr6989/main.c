@@ -53,6 +53,9 @@ int main(void)
     myLCD_showChar('U',5);
     myLCD_showChar('N',6);
 
+    myLCD_showSymbol(LCD_UPDATE,LCD_BRACKETS,0);
+
+
     // enable UART RXD interrupt
     UCA0IE = UCRXIE;
     _BIS_SR(GIE);
@@ -72,8 +75,6 @@ __interrupt void UART_ISR(void) {
 
        uint8_t charRead = UCA0RXBUF;
 
-       myLCD_showSymbol(LCD_UPDATE, LCD_RX, 0);
-
        myLCD_showChar(charRead,lcdIdx );
 
        buffer[bufferIdx]=charRead;
@@ -83,21 +84,37 @@ __interrupt void UART_ISR(void) {
 
        if (lcdIdx > 6) lcdIdx = 1;
 
+       if (bufferIdx > 0) myLCD_showSymbol(LCD_UPDATE,LCD_B1,0);
+       if (bufferIdx > 3) myLCD_showSymbol(LCD_UPDATE,LCD_B2,0);
+       if (bufferIdx > 6) myLCD_showSymbol(LCD_UPDATE,LCD_B3,0);
+       if (bufferIdx > 9) myLCD_showSymbol(LCD_UPDATE,LCD_B4,0);
+       if (bufferIdx > 12) myLCD_showSymbol(LCD_UPDATE,LCD_B5,0);
+       if (bufferIdx > 14) myLCD_showSymbol(LCD_UPDATE,LCD_B6,0);
+
+
+
        if ( bufferIdx > 15) {
+           myLCD_showSymbol(LCD_UPDATE, LCD_TX, 0);
            for (bufferIdx = 0; bufferIdx < 16 ; ++bufferIdx) {
+          //     while (! UCTXIFG);
                UCA0TXBUF = buffer[bufferIdx];
                //UCA0IFG = UCA0IFG & ( ~UCTXCPTIFG);
                int delay = 0;
                for (delay = 0; delay < 30000; ++delay);
-               myLCD_showSymbol(LCD_TOGGLE, LCD_TX, 0);
+
 
            }
            bufferIdx = 0;
+           myLCD_showSymbol(LCD_CLEAR,LCD_B1,0);
+           myLCD_showSymbol(LCD_CLEAR,LCD_B2,0);
+           myLCD_showSymbol(LCD_CLEAR,LCD_B3,0);
+           myLCD_showSymbol(LCD_CLEAR,LCD_B4,0);
+           myLCD_showSymbol(LCD_CLEAR,LCD_B5,0);
+           myLCD_showSymbol(LCD_CLEAR,LCD_B6,0);
+           myLCD_showSymbol(LCD_CLEAR, LCD_TX, 0);
 
        }
 
        UCA0IFG = UCA0IFG & ~(UCRXIFG);
-
-       myLCD_showSymbol(LCD_CLEAR, LCD_RX, 0);
 
 }
