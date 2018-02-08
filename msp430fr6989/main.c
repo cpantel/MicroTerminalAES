@@ -57,7 +57,9 @@ int main(void)
 
 
     // enable UART RXD interrupt
-    UCA0IE = UCRXIE;
+    UCA0IE = UCRXIE | UCTXIE;
+    UCA0IFG = UCA0IFG & ~(UCTXIFG);
+
     _BIS_SR(GIE);
 
     while (1);
@@ -67,10 +69,10 @@ int main(void)
 
 #pragma vector=USCI_A0_VECTOR
 __interrupt void UART_ISR(void) {
-       static int lcdIdx = 1;
-       static int bufferIdx = 0;
+   static int lcdIdx = 1;
+   static int bufferIdx = 0;
 
-
+   if ( UCA0IFG & UCRXIFG ) {
        P9OUT ^= BIT7;
 
        uint8_t charRead = UCA0RXBUF;
@@ -92,19 +94,10 @@ __interrupt void UART_ISR(void) {
        if (bufferIdx > 14) myLCD_showSymbol(LCD_UPDATE,LCD_B6,0);
 
 
-
        if ( bufferIdx > 15) {
            myLCD_showSymbol(LCD_UPDATE, LCD_TX, 0);
-           for (bufferIdx = 0; bufferIdx < 16 ; ++bufferIdx) {
-          //     while (! UCTXIFG);
-               UCA0TXBUF = buffer[bufferIdx];
-               //UCA0IFG = UCA0IFG & ( ~UCTXCPTIFG);
-               int delay = 0;
-               for (delay = 0; delay < 30000; ++delay);
 
 
-           }
-           bufferIdx = 0;
            myLCD_showSymbol(LCD_CLEAR,LCD_B1,0);
            myLCD_showSymbol(LCD_CLEAR,LCD_B2,0);
            myLCD_showSymbol(LCD_CLEAR,LCD_B3,0);
@@ -113,8 +106,29 @@ __interrupt void UART_ISR(void) {
            myLCD_showSymbol(LCD_CLEAR,LCD_B6,0);
            myLCD_showSymbol(LCD_CLEAR, LCD_TX, 0);
 
+           UCA0TXBUF = buffer[0];
+           bufferIdx=1;
+
+
        }
 
        UCA0IFG = UCA0IFG & ~(UCRXIFG);
+
+    }
+
+    if ( UCA0IFG & UCTXIFG ) {
+           P1OUT ^= BIT0;
+           UCA0IFG = UCA0IFG & ~(UCTXIFG);
+           if (bufferIdx < 16) {
+               UCA0TXBUF = buffer[bufferIdx];
+              ++bufferIdx;
+           } else {
+               bufferIdx = 0;
+           }
+
+
+
+    }
+
 
 }
