@@ -7,7 +7,7 @@ El objetivo de este proyecto es ejercitar y seguir aprendiendo sobre los concept
 * Utilizar los displays, leds y switches de ambas placas para monitorearlas y controlarlas. 
 * Conectar un teclado de [TI99-4A](https://en.wikipedia.org/wiki/Texas_Instruments_TI-99/4A) a la EDU-CIAA-NXP
 
-==Toolchains==
+## Toolchains
 * LaunchPad MSP-EXP430FR6989
   * CSS v7
 * EDU-CIAA-NXP + Poncho PLC
@@ -34,7 +34,7 @@ El objetivo de este proyecto es ejercitar y seguir aprendiendo sobre los concept
                        |   Display  |
                        +------------+ 
  
-==Elección de componentes==
+## Elección de componentes
 
 EDU-CIAA-NXP: Una elección natural.
 
@@ -43,4 +43,26 @@ Poncho PLC: por el display. ¿Por qué no el [Poncho Educativo]()? Por que el pu
 MSP-EXP430FR6989: por haberlo usado en el curso de Udemy, haber visto que tenía AES y haber quedado moralmente en deuda con un trabajo práctico final.
 
 Teclado matricial TI99 4A: por haberlo guardado por décadas.
+
+
+## Notas para este branch
+
+Debido a fallas en la comunicación serial, puse dos edu-ciaa-nxp conectadas por serial para utilizar las mismas librerías e intentar identificar la falla.
+
+<!-- language: lang-none -->
+
+    +---------+       +--------------+          +------------------+
+    |    PC   |       | EDU-CIAA-NXP |          | EDU-CIAA-NXP-2   |
+    |         |<----->|              |<-------->|   serial echo    | 
+    |  Tests  |       |              |          |                  |
+    +---------+       +--------------+          +------------------+
+                             |
+                             v
+                       +------------+ 
+                       | Poncho PLC |
+                       |   Display  |
+                       +------------+ 
+ 
+
+
 
