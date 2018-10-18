@@ -44,3 +44,9 @@ MSP-EXP430FR6989: por haberlo usado en el curso de Udemy, haber visto que tenía
 
 Teclado matricial TI99 4A: por haberlo guardado por décadas.
 
+
+==Cómo compilar==
+
+===EDU-CIAA-NXP===
+
+Lo más prolijito es tener este repo y el del firmware_v2 al lado, con un symlink en projects que apunte a este repo. Luego, configurar project.mk como siempre.
